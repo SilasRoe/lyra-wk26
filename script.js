@@ -1,6 +1,14 @@
 // Globale Variablen für Benutzerdaten
 let participantName = "";
 let returnToStartTimer;
+let answerSubmissionLocked = false;
+
+const entriesDatabaseName = 'mv-lyra-contest';
+const entriesStoreName = 'entries';
+
+if (navigator.storage?.persist) {
+    navigator.storage.persist().catch((error) => console.warn('Persistente Speicherung konnte nicht angefordert werden.', error));
+}
 
 // Element-Referenzen
 const curtainsWrapper = document.getElementById('curtainsWrapper');
@@ -15,11 +23,14 @@ const displayName = document.getElementById('displayName');
 const errorToast1 = document.getElementById('errorToast1');
 const errorToast2 = document.getElementById('errorToast2');
 const returnHomeButton = document.getElementById('returnHomeButton');
+const answerSubmitButton = document.querySelector('#questionForm button[type="submit"]');
 
 returnHomeButton.addEventListener('click', resetToStart);
 
 function resetToStart() {
     clearTimeout(returnToStartTimer);
+    answerSubmissionLocked = false;
+    answerSubmitButton.disabled = false;
     oscarCard.classList.add('is-hidden');
 
     const hideCard = (event) => {
@@ -92,13 +103,32 @@ function startShow() {
 }
 
 /**
- * Schritt 2: Antwort verarbeiten und Golden Ticket anzeigen
+ * Schritt 2: Antwort speichern und Golden Ticket anzeigen
  */
-function submitAnswer() {
+async function submitAnswer() {
     const answerVal = userAnswerInput.value.trim();
 
     if (!answerVal) {
         showToast(errorToast2);
+        return;
+    }
+
+    if (answerSubmissionLocked) return;
+    answerSubmissionLocked = true;
+    answerSubmitButton.disabled = true;
+
+    try {
+        await saveEntry({
+            name: participantName,
+            answer: answerVal,
+            submittedAt: new Date().toISOString()
+        });
+    } catch (error) {
+        answerSubmissionLocked = false;
+        answerSubmitButton.disabled = false;
+        errorToast2.textContent = 'Speichern fehlgeschlagen. Bitte versuche es erneut.';
+        showToast(errorToast2);
+        console.error('Teilnahme konnte nicht gespeichert werden.', error);
         return;
     }
 
@@ -118,6 +148,34 @@ function submitAnswer() {
             returnToStartTimer = setTimeout(resetToStart, 10000);
         }, 50);
     }, 500);
+}
+
+function saveEntry(entry) {
+    return new Promise((resolve, reject) => {
+        const openRequest = indexedDB.open(entriesDatabaseName, 1);
+
+        openRequest.onupgradeneeded = () => {
+            openRequest.result.createObjectStore(entriesStoreName, {
+                keyPath: 'id',
+                autoIncrement: true
+            });
+        };
+
+        openRequest.onerror = () => reject(openRequest.error);
+        openRequest.onsuccess = () => {
+            const database = openRequest.result;
+            const transaction = database.transaction(entriesStoreName, 'readwrite');
+            transaction.objectStore(entriesStoreName).add(entry);
+            transaction.oncomplete = () => {
+                database.close();
+                resolve();
+            };
+            transaction.onabort = () => {
+                database.close();
+                reject(transaction.error || new Error('IndexedDB-Transaktion abgebrochen.'));
+            };
+        };
+    });
 }
 
 /**
