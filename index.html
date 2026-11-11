@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="contest-correct-answer" content="32">
     <title>MV Lyra Gewinnspiel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -434,6 +435,206 @@
             font-size: 1.1rem;
         }
 
+        .question-actions {
+            display: grid;
+            grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+            gap: 12px;
+        }
+
+        .question-actions .btn-muted {
+            padding: 12px 10px;
+            font-size: 1rem;
+        }
+
+        .evaluation-launcher {
+            position: fixed;
+            right: max(12px, env(safe-area-inset-right));
+            bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 130;
+            display: grid;
+            width: 48px;
+            height: 48px;
+            place-items: center;
+            border: 1px solid rgba(212, 175, 55, 0.55);
+            border-radius: 50%;
+            background: rgba(20, 12, 14, 0.88);
+            color: var(--gold-light);
+            opacity: 0.72;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+            transition: opacity 0.2s ease, border-color 0.2s ease;
+        }
+
+        .evaluation-launcher[hidden] {
+            display: none;
+        }
+
+        .evaluation-launcher:hover,
+        .evaluation-launcher:focus-visible {
+            opacity: 1;
+            border-color: var(--gold-light);
+        }
+
+        .evaluation-launcher:focus-visible {
+            outline: 2px solid var(--gold-primary);
+            outline-offset: 3px;
+        }
+
+        .evaluation-launcher svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 1.7;
+        }
+
+        .evaluation-dialog {
+            width: min(440px, calc(100vw - 32px));
+            max-height: calc(100dvh - 32px);
+            margin: auto;
+            padding: 28px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: #ffffff;
+            box-shadow: var(--gold-shadow), 0 20px 50px rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+        }
+
+        .evaluation-dialog::backdrop {
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(3px);
+        }
+
+        .evaluation-dialog h2 {
+            margin-bottom: 8px;
+            color: var(--gold-light);
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+        }
+
+        .evaluation-note {
+            margin-bottom: 20px;
+            color: #e2d7c5;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .evaluation-dialog .input-group {
+            margin-bottom: 16px;
+        }
+
+        .evaluation-dialog .input-label {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .evaluation-error {
+            margin-bottom: 14px;
+            color: #ffb6c1;
+            font-size: 0.9rem;
+        }
+
+        .evaluation-actions {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 12px;
+        }
+
+        .evaluation-actions button {
+            width: 100%;
+            padding: 12px 10px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .btn-muted {
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.45);
+            color: #e2d7c5;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .winner-dialog {
+            inset: 0;
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            max-width: none;
+            max-height: none;
+            margin: 0;
+            padding: 32px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            background: radial-gradient(circle at 50% 30%, #4b3512 0%, #1b1010 42%, #080203 100%);
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .winner-dialog::backdrop {
+            background: #080203;
+        }
+
+        .winner-content {
+            width: min(900px, 100%);
+        }
+
+        .winner-close {
+            top: max(12px, env(safe-area-inset-top));
+            right: max(12px, env(safe-area-inset-right));
+            width: 48px;
+            height: 48px;
+        }
+
+        .winner-kicker {
+            color: var(--gold-light);
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .winner-name {
+            margin: 22px 0;
+            color: var(--gold-light);
+            font-family: var(--font-heading);
+            font-size: 5rem;
+            line-height: 1.1;
+            overflow-wrap: anywhere;
+            text-shadow: 0 4px 24px rgba(212, 175, 55, 0.35);
+        }
+
+        .winner-details {
+            color: #e2d7c5;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .winner-home-button {
+            width: auto;
+            min-width: 220px;
+            margin-top: 28px;
+            padding: 14px 24px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            .winner-dialog {
+                padding: 24px;
+            }
+
+            .winner-name {
+                font-size: 2.5rem;
+            }
+        }
+
         .stage3-close {
             position: absolute;
             top: 12px;
@@ -570,9 +771,10 @@
                             placeholder="Anzahl der Nennungen eingeben..." autocomplete="off" required>
                     </div>
 
-                    <button type="submit" class="btn-gold">
-                        Antwort Absenden
-                    </button>
+                    <div class="question-actions">
+                        <button id="backToStartButton" type="button" class="btn-muted">Zurück</button>
+                        <button type="submit" class="btn-gold">Antwort Absenden</button>
+                    </div>
                 </form>
             </div>
 
@@ -597,6 +799,48 @@
 
         </div>
     </main>
+
+    <button id="evaluationLaunchButton" class="evaluation-launcher" type="button" aria-label="Auswertung öffnen"
+        title="Auswertung">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            <path d="M12 14v3"></path>
+        </svg>
+    </button>
+
+    <dialog id="evaluationDialog" class="evaluation-dialog" aria-labelledby="evaluationTitle">
+        <form id="evaluationForm">
+            <h2 id="evaluationTitle">Auswertung freigeben</h2>
+            <p class="evaluation-note">PIN eingeben, um die Auswertung zu starten.</p>
+
+            <div class="input-group">
+                <label for="evaluationPinInput" class="input-label">Pincode</label>
+                <input type="password" id="evaluationPinInput" class="styled-input" inputmode="numeric"
+                    autocomplete="off" required>
+            </div>
+
+            <p id="evaluationError" class="evaluation-error" role="alert" hidden></p>
+
+            <div class="evaluation-actions">
+                <button id="cancelEvaluationButton" type="button" class="btn-muted">Abbrechen</button>
+                <button type="submit" class="btn-gold">Auslosen</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="winnerDialog" class="winner-dialog" aria-labelledby="winnerStatus"
+        aria-describedby="winnerName winnerDetails">
+        <button id="closeWinnerButton" type="button" class="stage3-close winner-close"
+            aria-label="Gewinneranzeige schließen">&times;</button>
+        <div class="winner-content">
+            <p id="winnerStatus" class="winner-kicker">Auswertung</p>
+            <h1 id="winnerName" class="winner-name"></h1>
+            <p id="winnerDetails" class="winner-details"></p>
+            <button id="winnerHomeButton" type="button" class="btn-gold winner-home-button">Zur Startseite</button>
+        </div>
+    </dialog>
+
     <script>
         // Globale Variablen für Benutzerdaten
         let participantName = "";
@@ -605,6 +849,8 @@
 
         const entriesDatabaseName = 'mv-lyra-contest';
         const entriesStoreName = 'entries';
+        const evaluationPin = '123456';
+        let evaluationInProgress = false;
 
         if (navigator.storage?.persist) {
             navigator.storage.persist().catch((error) => console.warn('Persistente Speicherung konnte nicht angefordert werden.', error));
@@ -621,9 +867,35 @@
         const userAnswerInput = document.getElementById('userAnswer');
         const errorToast2 = document.getElementById('errorToast2');
         const returnHomeButton = document.getElementById('returnHomeButton');
+        const backToStartButton = document.getElementById('backToStartButton');
         const answerSubmitButton = document.querySelector('#questionForm button[type="submit"]');
+        const evaluationLaunchButton = document.getElementById('evaluationLaunchButton');
+        const evaluationDialog = document.getElementById('evaluationDialog');
+        const evaluationForm = document.getElementById('evaluationForm');
+        const evaluationPinInput = document.getElementById('evaluationPinInput');
+        const evaluationError = document.getElementById('evaluationError');
+        const cancelEvaluationButton = document.getElementById('cancelEvaluationButton');
+        const winnerDialog = document.getElementById('winnerDialog');
+        const winnerStatus = document.getElementById('winnerStatus');
+        const winnerName = document.getElementById('winnerName');
+        const winnerDetails = document.getElementById('winnerDetails');
+        const closeWinnerButton = document.getElementById('closeWinnerButton');
+        const winnerHomeButton = document.getElementById('winnerHomeButton');
 
         returnHomeButton.addEventListener('click', resetToStart);
+        backToStartButton.addEventListener('click', resetToStart);
+        evaluationLaunchButton.addEventListener('click', () => {
+            evaluationError.hidden = true;
+            evaluationForm.reset();
+            evaluationDialog.showModal();
+        });
+        cancelEvaluationButton.addEventListener('click', () => evaluationDialog.close());
+        evaluationForm.addEventListener('submit', runEvaluation);
+        closeWinnerButton.addEventListener('click', () => winnerDialog.close());
+        winnerHomeButton.addEventListener('click', () => winnerDialog.close());
+        winnerDialog.addEventListener('close', () => {
+            evaluationLaunchButton.hidden = false;
+        });
 
         function resetToStart() {
             clearTimeout(returnToStartTimer);
@@ -652,6 +924,7 @@
                     if (curtainEvent.target !== leftCurtain || curtainEvent.propertyName !== 'transform') return;
                     leftCurtain.removeEventListener('transitionend', showCard);
                     stage1.classList.add('active');
+                    evaluationLaunchButton.hidden = false;
                     oscarCard.classList.remove('is-hidden');
                 };
 
@@ -666,6 +939,8 @@
          * Schritt 1: Startet die Vorhang-Öffnung und wechselt auf die Hauptbühne
          */
         function startShow() {
+            evaluationLaunchButton.hidden = true;
+
             // 1. Vorhang aufziehen (CSS Animation 2.4s)
             curtainsWrapper.classList.add('open');
 
@@ -764,6 +1039,104 @@
                     };
                 };
             });
+        }
+
+        async function runEvaluation(event) {
+            event.preventDefault();
+            if (evaluationInProgress) return;
+
+            if (evaluationPinInput.value.trim() !== evaluationPin) {
+                evaluationError.textContent = 'Der Pincode ist nicht korrekt.';
+                evaluationError.hidden = false;
+                evaluationPinInput.focus();
+                return;
+            }
+
+            const correctAnswer = Number(document.querySelector('meta[name="contest-correct-answer"]').content);
+
+            evaluationInProgress = true;
+            const evaluationSubmitButton = evaluationForm.querySelector('button[type="submit"]');
+            evaluationSubmitButton.disabled = true;
+
+            try {
+                const entries = await loadEntries();
+                const validEntries = entries
+                    .filter(entry => typeof entry.name === 'string' && entry.name.trim() && entry.answer !== '')
+                    .map(entry => ({ name: entry.name.trim(), answer: Number(entry.answer) }))
+                    .filter(entry => Number.isInteger(entry.answer) && entry.answer >= 0);
+
+                showWinner(validEntries, correctAnswer);
+                evaluationDialog.close();
+                evaluationLaunchButton.hidden = true;
+                winnerDialog.showModal();
+            } catch (error) {
+                evaluationError.textContent = 'Die Teilnahmen konnten nicht geladen werden. Bitte versuche es erneut.';
+                evaluationError.hidden = false;
+                console.error('Auswertung konnte nicht geladen werden.', error);
+            } finally {
+                evaluationInProgress = false;
+                evaluationSubmitButton.disabled = false;
+            }
+        }
+
+        function loadEntries() {
+            return new Promise((resolve, reject) => {
+                const openRequest = indexedDB.open(entriesDatabaseName, 1);
+
+                openRequest.onupgradeneeded = () => {
+                    const database = openRequest.result;
+                    if (!database.objectStoreNames.contains(entriesStoreName)) {
+                        database.createObjectStore(entriesStoreName, {
+                            keyPath: 'id',
+                            autoIncrement: true
+                        });
+                    }
+                };
+
+                openRequest.onerror = () => reject(openRequest.error);
+                openRequest.onsuccess = () => {
+                    const database = openRequest.result;
+                    if (!database.objectStoreNames.contains(entriesStoreName)) {
+                        database.close();
+                        resolve([]);
+                        return;
+                    }
+
+                    const transaction = database.transaction(entriesStoreName, 'readonly');
+                    let entries = [];
+                    const request = transaction.objectStore(entriesStoreName).getAll();
+                    request.onsuccess = () => {
+                        entries = request.result || [];
+                    };
+                    transaction.oncomplete = () => {
+                        database.close();
+                        resolve(entries);
+                    };
+                    transaction.onerror = () => {
+                        database.close();
+                        reject(transaction.error || new Error('IndexedDB-Lesevorgang fehlgeschlagen.'));
+                    };
+                };
+            });
+        }
+
+        function showWinner(entries, correctAnswer) {
+            if (entries.length === 0) {
+                winnerStatus.textContent = 'Keine Teilnahmen';
+                winnerName.textContent = 'Noch keine gültigen Teilnahmen';
+                winnerDetails.textContent = '';
+                return;
+            }
+
+            const closestDifference = Math.min(...entries.map(entry => Math.abs(entry.answer - correctAnswer)));
+            const finalists = entries.filter(entry => Math.abs(entry.answer - correctAnswer) === closestDifference);
+            const winner = finalists[Math.floor(Math.random() * finalists.length)];
+
+            winnerStatus.textContent = closestDifference === 0 ? 'Exakter Treffer' : 'Nächstliegende Schätzung';
+            winnerName.textContent = winner.name;
+            winnerDetails.textContent = closestDifference === 0
+                ? `Richtige Antwort: ${correctAnswer}. Aus ${finalists.length} exakten Treffern ausgelost.`
+                : `Schätzung: ${winner.answer}. Richtige Antwort: ${correctAnswer}. Aus ${finalists.length} gleich nahen Schätzungen ausgelost.`;
         }
 
         /**
