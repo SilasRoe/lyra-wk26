@@ -251,6 +251,7 @@
           text-transform: uppercase;
           background: var(--gold-gradient);
           -webkit-background-clip: text;
+          background-clip: text;
           -webkit-text-fill-color: transparent;
           margin-bottom: 10px;
           text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -400,6 +401,36 @@
           color: #f0e6d2;
           font-size: 0.95rem;
           line-height: 1.5;
+        }
+
+        .stage3-close {
+          position: absolute;
+          top: 12px;
+          right: 14px;
+          width: 40px;
+          height: 40px;
+          display: grid;
+          place-items: center;
+          border: 0;
+          background: transparent;
+          color: var(--gold-light);
+          font-family: var(--font-body);
+          font-size: 2rem;
+          line-height: 1;
+          cursor: pointer;
+          z-index: 1;
+          transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .stage3-close:hover {
+          color: #ffffff;
+          transform: scale(1.1);
+        }
+
+        .stage3-close:focus-visible {
+          outline: 2px solid var(--gold-primary);
+          outline-offset: 2px;
+          border-radius: 4px;
         }
 
         /* Golden Ticket (Gewinnbestätigung) */

@@ -1,9 +1,11 @@
 // Globale Variablen für Benutzerdaten
 let participantName = "";
+let returnToStartTimer;
 
 // Element-Referenzen
 const curtainsWrapper = document.getElementById('curtainsWrapper');
 const oscarCard = document.querySelector('.oscar-card');
+const leftCurtain = document.querySelector('.curtain-left');
 const stage1 = document.getElementById('stage1');
 const stage2 = document.getElementById('stage2');
 const stage3 = document.getElementById('stage3');
@@ -12,6 +14,46 @@ const userAnswerInput = document.getElementById('userAnswer');
 const displayName = document.getElementById('displayName');
 const errorToast1 = document.getElementById('errorToast1');
 const errorToast2 = document.getElementById('errorToast2');
+const returnHomeButton = document.getElementById('returnHomeButton');
+
+returnHomeButton.addEventListener('click', resetToStart);
+
+function resetToStart() {
+    clearTimeout(returnToStartTimer);
+    oscarCard.classList.add('is-hidden');
+
+    const hideCard = (event) => {
+        if (event.target !== oscarCard || event.propertyName !== 'opacity') return;
+        oscarCard.removeEventListener('transitionend', hideCard);
+
+        participantName = "";
+        stage1.classList.remove('active');
+        stage1.style.display = 'block';
+        stage2.classList.remove('active');
+        stage2.style.display = 'none';
+        stage3.classList.remove('active');
+        stage3.style.display = 'none';
+        userNameInput.value = "";
+        userAnswerInput.value = "";
+        displayName.textContent = 'Gast';
+        document.getElementById('summaryName').textContent = '-';
+        document.getElementById('summaryAnswer').textContent = '-';
+        errorToast1.style.display = 'none';
+        errorToast2.style.display = 'none';
+
+        const showCard = (curtainEvent) => {
+            if (curtainEvent.target !== leftCurtain || curtainEvent.propertyName !== 'transform') return;
+            leftCurtain.removeEventListener('transitionend', showCard);
+            stage1.classList.add('active');
+            oscarCard.classList.remove('is-hidden');
+        };
+
+        leftCurtain.addEventListener('transitionend', showCard);
+        curtainsWrapper.classList.remove('open');
+    };
+
+    oscarCard.addEventListener('transitionend', hideCard);
+}
 
 /**
  * Schritt 1: Startet die Vorhang-Öffnung und wechselt auf die Hauptbühne
@@ -73,6 +115,7 @@ function submitAnswer() {
         setTimeout(() => {
             stage3.classList.add('active');
             triggerGoldConfetti();
+            returnToStartTimer = setTimeout(resetToStart, 10000);
         }, 50);
     }, 500);
 }
