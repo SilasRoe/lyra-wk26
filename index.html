@@ -5,15 +5,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MV Lyra Gewinnspiel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
 </head>
 
 <body>
-    <main class="container section text-center">
-        <h1>MV LYRA GEWINNSPIEL</h1>
-        <p>Gewinne kostenlose Getränke!</p>
+    <!-- SVG Gradient definition for Trophy -->
+    <svg style="width:0;height:0;position:absolute;">
+        <defs>
+            <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fff0ad" />
+                <stop offset="50%" stop-color="#d4af37" />
+                <stop offset="100%" stop-color="#8c6d15" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Konfetti Canvas für den Gewinn-Moment -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- 1. BÜHNE & LICHTER (Behind Curtains) -->
+    <div class="stage-background">
+        <div class="spotlight"></div>
+        <div class="sparkles"></div>
+    </div>
+
+    <!-- 2. DIE ROTEN VORHÄNGE (Over Stage) -->
+    <div class="curtains-wrapper" id="curtainsWrapper">
+        <div class="curtain-valance">
+            <div class="valance-decor"></div>
+        </div>
+        <div class="curtain curtain-left"></div>
+        <div class="curtain curtain-right"></div>
+    </div>
+
+    <!-- 3. INHALTS-BEREICH (Oscar Card) -->
+    <main class="content-viewport">
+        <div class="oscar-card">
+            <!-- STAGE 1: Willkommen & Namenseingabe -->
+            <div id="stage1" class="stage-section active">
+                <h1 class="gala-title">Tippspiel zum Winterkonzert</h1>
+                <p class="gala-subtitle">Gewinne kostenlose Getränke und Snacks</p>
+
+                <div id="errorToast1" class="error-toast">Bitte gib deinen Namen ein, um fortzufahren.</div>
+
+                <form id="welcomeForm" onsubmit="event.preventDefault(); startShow();">
+                    <div class="input-group">
+                        <label for="userName" class="input-label">Dein Name</label>
+                        <input type="text" id="userName" class="styled-input" placeholder="z.B. Maria Muster"
+                            autocomplete="name" required>
+                    </div>
+
+                    <button type="submit" class="btn-gold">
+                        Weiter
+                    </button>
+                </form>
+            </div>
+
+            <!-- STAGE 2: Die Gewinnspiel-Frage (Hinter dem Vorhang) -->
+            <div id="stage2" class="stage-section">
+                <h1 class="gala-title">Deine Schätz-Frage</h1>
+                <p class="gala-subtitle">Willkommen auf der Hauptbühne, <span id="displayName"
+                        style="color:var(--gold-light); font-weight:700;">Gast</span>!</p>
+
+                <div class="question-box">
+                    <p class="question-text">
+                        Wie oft wurde der Name <em>Phillip</em> im Film <em>1805 - A Townstale</em> genannt?
+                    </p>
+                </div>
+
+                <div id="errorToast2" class="error-toast">Bitte gib deine Antwort ein.</div>
+
+                <form id="questionForm" onsubmit="event.preventDefault(); submitAnswer();">
+                    <div class="input-group">
+                        <label for="userAnswer" class="input-label">Deine Antwort</label>
+                        <input type="number" id="userAnswer" class="styled-input"
+                            placeholder="Anzahl der Nennungen eingeben..." autocomplete="off" required>
+                    </div>
+
+                    <button type="submit" class="btn-gold">
+                        Antwort Absenden
+                    </button>
+                </form>
+            </div>
+
+            <!-- STAGE 3: Bestätigung & Golden Ticket -->
+            <div id="stage3" class="stage-section">
+                <div class="ticket-badge">
+                    <p style="text-transform:uppercase; font-size:0.8rem; letter-spacing:1px; color:var(--gold-light);">
+                        Wettschein</p>
+                    <p style="font-size:0.9rem; color:#e2d7c5;">
+                        Teilnehmer: <strong id="summaryName" style="color:#fff;">-</strong><br>
+                        Eingereichte Antwort: <em id="summaryAnswer" style="color:var(--gold-light);">-</em>
+                    </p>
+                </div>
+
+                <p style="font-size:0.85rem; color:#a09285; margin-top:20px;">
+                    Der Gewinner wird im Verlauf der After-Show-Party verkündet. Viel Erfolg!
+                </p>
+            </div>
+
+        </div>
     </main>
+    <script src="script.js"></script>
 </body>
 
 </html>
