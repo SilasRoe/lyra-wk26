@@ -30,15 +30,23 @@ function startShow() {
     // 1. Vorhang aufziehen (CSS Animation 2.4s)
     curtainsWrapper.classList.add('open');
 
-    // 2. Weiche Transition der Inhaltskarte
-    stage1.classList.remove('active');
+    const hideWelcomeStage = (event) => {
+        if (event.target !== oscarCard || event.propertyName !== 'opacity') return;
+        stage1.classList.remove('active');
+        oscarCard.removeEventListener('transitionend', hideWelcomeStage);
+    };
 
+    oscarCard.addEventListener('transitionend', hideWelcomeStage);
+    oscarCard.classList.add('is-hidden');
+
+    // 2. Weiche Transition der Inhaltskarte
     setTimeout(() => {
         stage1.style.display = 'none';
         stage2.style.display = 'block';
+        oscarCard.classList.remove('is-hidden');
         // Erneuter Aufruf für Smooth Fade-In
         setTimeout(() => stage2.classList.add('active'), 50);
-    }, 800);
+    }, 1000);
 }
 
 /**

@@ -218,6 +218,12 @@
           transition: all 0.8s ease;
         }
 
+        .oscar-card.is-hidden {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+
         .oscar-card::before {
           content: '';
           position: absolute;
