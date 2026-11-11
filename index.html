@@ -258,7 +258,7 @@
         /* Typografie */
         h1.gala-title {
             font-family: var(--font-heading);
-            font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+            font-size: clamp(3rem, 4.5vw, 2.6rem);
             font-weight: 900;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -271,7 +271,7 @@
         }
 
         .gala-subtitle {
-            font-size: 0.95rem;
+            font-size: 1.5rem;
             color: #e2d7c5;
             margin-bottom: 30px;
             font-weight: 300;
@@ -289,7 +289,7 @@
         .input-label {
             display: block;
             font-family: var(--font-heading);
-            font-size: 0.85rem;
+            font-size: 1.25rem;
             color: var(--gold-light);
             margin-bottom: 8px;
             letter-spacing: 1px;
@@ -325,7 +325,7 @@
             width: 100%;
             padding: 16px 30px;
             font-family: var(--font-heading);
-            font-size: 1rem;
+            font-size: 1.25rem;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -412,7 +412,7 @@
 
         .question-text {
             color: #f0e6d2;
-            font-size: 0.95rem;
+            font-size: 1.5rem;
             line-height: 1.5;
         }
 
@@ -519,41 +519,35 @@
     <!-- 3. INHALTS-BEREICH (Oscar Card) -->
     <main class="content-viewport">
         <div class="oscar-card">
-            <!-- STAGE 1: Willkommen & Namenseingabe -->
+            <!-- STAGE 1: Willkommen -->
             <div id="stage1" class="stage-section active">
-                <h1 class="gala-title">Tippspiel zum Winterkonzert</h1>
-                <p class="gala-subtitle">Gewinne kostenlose Getränke und Snacks</p>
+                <h1 class="gala-title">Tippspiel zur Filmnacht</h1>
+                <p class="gala-subtitle">Schätzen Sie mit und sichern Sie sich die Chance auf zwei Getränke Ihrer Wahl
+                    auf der
+                    After-Show-Party.</p>
+                <button type="button" class="btn-gold" onclick="startShow()">Weiter</button>
+            </div>
 
-                <div id="errorToast1" class="error-toast">Bitte gib deinen Namen ein, um fortzufahren.</div>
+            <!-- STAGE 2: Die Gewinnspiel-Frage (Hinter dem Vorhang) -->
+            <div id="stage2" class="stage-section">
+                <h1 class="gala-title">Die Schätzfrage</h1>
+                <div class="question-box">
+                    <p class="question-text">
+                        Wie oft wurde der Name <b>Phillipe</b> im Film <b>1805 - A Town's Tale</b> genannt?
+                    </p>
+                </div>
 
-                <form id="welcomeForm" onsubmit="event.preventDefault(); startShow();">
+                <div id="errorToast2" class="error-toast">Bitte gib deinen Namen und deine Schätzung ein.</div>
+
+                <form id="questionForm" onsubmit="event.preventDefault(); submitAnswer();">
                     <div class="input-group">
                         <label for="userName" class="input-label">Dein Name</label>
                         <input type="text" id="userName" class="styled-input" placeholder="z.B. Maria Muster"
                             autocomplete="name" required>
                     </div>
 
-                    <button type="submit" class="btn-gold">
-                        Weiter
-                    </button>
-                </form>
-            </div>
-
-            <!-- STAGE 2: Die Gewinnspiel-Frage (Hinter dem Vorhang) -->
-            <div id="stage2" class="stage-section">
-                <h1 class="gala-title">Willkommen bei der Schätz-Frage, <span id="displayName">Gast</span>!</p>
-                </h1>
-                <div class="question-box">
-                    <p class="question-text">
-                        Wie oft wurde der Name <em>Phillip</em> im Film <em>1805 - A Townstale</em> genannt?
-                    </p>
-                </div>
-
-                <div id="errorToast2" class="error-toast">Bitte gib deine Antwort ein.</div>
-
-                <form id="questionForm" onsubmit="event.preventDefault(); submitAnswer();">
                     <div class="input-group">
-                        <label for="userAnswer" class="input-label">Deine Antwort</label>
+                        <label for="userAnswer" class="input-label">Deine Schätzung</label>
                         <input type="number" id="userAnswer" class="styled-input"
                             placeholder="Anzahl der Nennungen eingeben..." autocomplete="off" required>
                     </div>
@@ -573,7 +567,7 @@
                         Wettschein</p>
                     <p style="font-size:0.9rem; color:#e2d7c5;">
                         Teilnehmer: <strong id="summaryName" style="color:#fff;">-</strong><br>
-                        Eingereichte Antwort: <em id="summaryAnswer" style="color:var(--gold-light);">-</em>
+                        Eingereichte Schätzung: <em id="summaryAnswer" style="color:var(--gold-light);">-</em>
                     </p>
                 </div>
 
@@ -607,8 +601,6 @@
         const stage3 = document.getElementById('stage3');
         const userNameInput = document.getElementById('userName');
         const userAnswerInput = document.getElementById('userAnswer');
-        const displayName = document.getElementById('displayName');
-        const errorToast1 = document.getElementById('errorToast1');
         const errorToast2 = document.getElementById('errorToast2');
         const returnHomeButton = document.getElementById('returnHomeButton');
         const answerSubmitButton = document.querySelector('#questionForm button[type="submit"]');
@@ -634,10 +626,8 @@
                 stage3.style.display = 'none';
                 userNameInput.value = "";
                 userAnswerInput.value = "";
-                displayName.textContent = 'Gast';
                 document.getElementById('summaryName').textContent = '-';
                 document.getElementById('summaryAnswer').textContent = '-';
-                errorToast1.style.display = 'none';
                 errorToast2.style.display = 'none';
 
                 const showCard = (curtainEvent) => {
@@ -658,16 +648,6 @@
          * Schritt 1: Startet die Vorhang-Öffnung und wechselt auf die Hauptbühne
          */
         function startShow() {
-            const nameVal = userNameInput.value.trim();
-
-            if (!nameVal) {
-                showToast(errorToast1);
-                return;
-            }
-
-            participantName = nameVal;
-            displayName.textContent = participantName;
-
             // 1. Vorhang aufziehen (CSS Animation 2.4s)
             curtainsWrapper.classList.add('open');
 
@@ -694,14 +674,16 @@
          * Schritt 2: Antwort speichern und Golden Ticket anzeigen
          */
         async function submitAnswer() {
+            const nameVal = userNameInput.value.trim();
             const answerVal = userAnswerInput.value.trim();
 
-            if (!answerVal) {
+            if (!nameVal || !answerVal) {
                 showToast(errorToast2);
                 return;
             }
 
             if (answerSubmissionLocked) return;
+            participantName = nameVal;
             answerSubmissionLocked = true;
             answerSubmitButton.disabled = true;
 
@@ -733,7 +715,7 @@
                 setTimeout(() => {
                     stage3.classList.add('active');
                     triggerGoldConfetti();
-                    returnToStartTimer = setTimeout(resetToStart, 10000);
+                    returnToStartTimer = setTimeout(resetToStart, 4000);
                 }, 50);
             }, 500);
         }
