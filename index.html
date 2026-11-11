@@ -617,6 +617,12 @@
             line-height: 1.6;
         }
 
+        .winner-count {
+            margin-top: 12px;
+            color: var(--gold-light);
+            font-size: 0.95rem;
+        }
+
         .winner-home-button {
             width: auto;
             min-width: 220px;
@@ -830,13 +836,14 @@
     </dialog>
 
     <dialog id="winnerDialog" class="winner-dialog" aria-labelledby="winnerStatus"
-        aria-describedby="winnerName winnerDetails">
+        aria-describedby="winnerName winnerDetails winnerParticipantCount">
         <button id="closeWinnerButton" type="button" class="stage3-close winner-close"
             aria-label="Gewinneranzeige schließen">&times;</button>
         <div class="winner-content">
             <p id="winnerStatus" class="winner-kicker">Auswertung</p>
             <h1 id="winnerName" class="winner-name"></h1>
             <p id="winnerDetails" class="winner-details"></p>
+            <p id="winnerParticipantCount" class="winner-count"></p>
             <button id="winnerHomeButton" type="button" class="btn-gold winner-home-button">Zur Startseite</button>
         </div>
     </dialog>
@@ -845,6 +852,7 @@
         // Globale Variablen für Benutzerdaten
         let participantName = "";
         let returnToStartTimer;
+        let stage2InactivityTimer;
         let answerSubmissionLocked = false;
 
         const entriesDatabaseName = 'mv-lyra-contest';
@@ -879,11 +887,15 @@
         const winnerStatus = document.getElementById('winnerStatus');
         const winnerName = document.getElementById('winnerName');
         const winnerDetails = document.getElementById('winnerDetails');
+        const winnerParticipantCount = document.getElementById('winnerParticipantCount');
         const closeWinnerButton = document.getElementById('closeWinnerButton');
         const winnerHomeButton = document.getElementById('winnerHomeButton');
 
         returnHomeButton.addEventListener('click', resetToStart);
         backToStartButton.addEventListener('click', resetToStart);
+        ['input', 'keydown', 'pointerdown'].forEach(eventName => {
+            stage2.addEventListener(eventName, resetStage2InactivityTimer);
+        });
         evaluationLaunchButton.addEventListener('click', () => {
             evaluationError.hidden = true;
             evaluationForm.reset();
@@ -898,6 +910,7 @@
         });
 
         function resetToStart() {
+            clearTimeout(stage2InactivityTimer);
             clearTimeout(returnToStartTimer);
             answerSubmissionLocked = false;
             answerSubmitButton.disabled = false;
@@ -959,8 +972,16 @@
                 stage2.style.display = 'block';
                 oscarCard.classList.remove('is-hidden');
                 // Erneuter Aufruf für Smooth Fade-In
-                setTimeout(() => stage2.classList.add('active'), 50);
+                setTimeout(() => {
+                    stage2.classList.add('active');
+                    resetStage2InactivityTimer();
+                }, 50);
             }, 1000);
+        }
+
+        function resetStage2InactivityTimer() {
+            clearTimeout(stage2InactivityTimer);
+            stage2InactivityTimer = setTimeout(resetToStart, 15000);
         }
 
         /**
@@ -976,6 +997,7 @@
             }
 
             if (answerSubmissionLocked) return;
+            clearTimeout(stage2InactivityTimer);
             participantName = nameVal;
             answerSubmissionLocked = true;
             answerSubmitButton.disabled = true;
@@ -989,6 +1011,7 @@
             } catch (error) {
                 answerSubmissionLocked = false;
                 answerSubmitButton.disabled = false;
+                resetStage2InactivityTimer();
                 errorToast2.textContent = 'Speichern fehlgeschlagen. Bitte versuche es erneut.';
                 showToast(errorToast2);
                 console.error('Teilnahme konnte nicht gespeichert werden.', error);
@@ -1065,7 +1088,7 @@
                     .map(entry => ({ name: entry.name.trim(), answer: Number(entry.answer) }))
                     .filter(entry => Number.isInteger(entry.answer) && entry.answer >= 0);
 
-                showWinner(validEntries, correctAnswer);
+                showWinner(validEntries, correctAnswer, entries.length);
                 evaluationDialog.close();
                 evaluationLaunchButton.hidden = true;
                 winnerDialog.showModal();
@@ -1120,7 +1143,11 @@
             });
         }
 
-        function showWinner(entries, correctAnswer) {
+        function showWinner(entries, correctAnswer, totalParticipants = entries.length) {
+            winnerParticipantCount.textContent = totalParticipants === 1
+                ? '1 Person hat teilgenommen.'
+                : `${totalParticipants} Personen haben teilgenommen.`;
+
             if (entries.length === 0) {
                 winnerStatus.textContent = 'Keine Teilnahmen';
                 winnerName.textContent = 'Noch keine gültigen Teilnahmen';
