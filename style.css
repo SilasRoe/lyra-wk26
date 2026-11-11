@@ -1,0 +1,128 @@
+/* --- 1. Schriftarten (Google Fonts Import) --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600&display=swap');
+
+/* --- 2. Design-Tokens & Farbschema --- */
+:root {
+  /* Haupt- und Akzentfarben (Gold & Samt-Rot) */
+  --gold-primary: #d4af37;
+  --gold-light: #fbe8a6;
+  --gold-dark: #997a15;
+  --gold-gradient: linear-gradient(135deg, #fbe8a6 0%, #d4af37 50%, #997a15 100%);
+  
+  --red-dark: #2b0006;
+  --red-mid: #5c000f;
+  --red-bright: #8f0017;
+  
+  --bg-dark: #0d0809;
+  --text-primary: #fff8e7;
+  --text-muted: #d1c7b7;
+  --text-gold: #e6ca65;
+
+  /* Typografie */
+  --font-heading: 'Cinzel', 'Bodoni MT', 'Didot', serif;
+  --font-body: 'Montserrat', 'Helvetica Neue', sans-serif;
+
+  /* Abstände & Layout */
+  --container-max-width: 1100px;
+}
+
+/* --- 3. CSS Reset & Basiseinstellungen --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+/* --- 4. Vorhang-Hintergrund & Body-Styling --- */
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+  background-color: var(--red-dark);
+  /* Pure CSS Vorhang-Effekt:
+     - Ebene 1: Vignette & Spotlight von oben
+     - Ebene 2: Wiederholender linearer Verlauf für die Stofffalten des roten Vorhangs */
+  background-image: 
+    radial-gradient(ellipse at top center, rgba(255, 215, 0, 0.12) 0%, rgba(0, 0, 0, 0.85) 75%),
+    repeating-linear-gradient(
+      90deg,
+      var(--red-dark) 0px,
+      var(--red-mid) 30px,
+      var(--red-bright) 60px,
+      var(--red-mid) 90px,
+      var(--red-dark) 120px
+    );
+  background-attachment: fixed;
+  background-size: cover, 120px 100%;
+}
+
+/* --- 5. Grundlegende Typografie & Texte --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--gold-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  /* Dezenter Gold-Schimmer & Schatten für Film-Titel-Optik */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+}
+
+h3 {
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+}
+
+p {
+  margin-bottom: 1.2rem;
+  color: var(--text-primary);
+}
+
+.text-gold {
+  color: var(--text-gold);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+a {
+  color: var(--gold-light);
+  text-decoration: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* --- 6. Generische Layout-Helfer --- */
+.container {
+  width: 90%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section {
+  padding: 60px 0;
+}
+
+.text-center {
+  text-align: center;
+}
