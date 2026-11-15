@@ -1002,6 +1002,22 @@
             answerSubmitButton.disabled = true;
 
             try {
+                const entries = await loadEntries();
+                const normalizedName = participantName.toLocaleLowerCase('de-DE');
+                const nameExists = entries.some(entry =>
+                    typeof entry.name === 'string'
+                    && entry.name.trim().toLocaleLowerCase('de-DE') === normalizedName
+                );
+
+                if (nameExists) {
+                    answerSubmissionLocked = false;
+                    answerSubmitButton.disabled = false;
+                    errorToast2.textContent = 'Dieser Name existiert bereits. Bitte wähle einen anderen Namen.';
+                    showToast(errorToast2);
+                    resetStage2InactivityTimer();
+                    return;
+                }
+
                 await saveEntry({
                     name: participantName,
                     answer: answerVal,
