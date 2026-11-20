@@ -602,13 +602,21 @@
         }
 
         .winner-name {
-            margin: 22px 0;
             color: var(--gold-light);
             font-family: var(--font-heading);
-            font-size: 5rem;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 32px;
+            margin-block: 22px;
+            padding: 0;
+            font-size: 2.2rem;
             line-height: 1.1;
-            overflow-wrap: anywhere;
             text-shadow: 0 4px 24px rgba(212, 175, 55, 0.35);
+            list-style-position: inside;
+        }
+
+        .winner-name li {
+            overflow-wrap: anywhere;
         }
 
         .winner-details {
@@ -637,7 +645,8 @@
             }
 
             .winner-name {
-                font-size: 2.5rem;
+                grid-template-columns: 1fr;
+                font-size: 1.8rem;
             }
         }
 
@@ -747,7 +756,8 @@
             <!-- STAGE 1: Willkommen -->
             <div id="stage1" class="stage-section active">
                 <h1 class="gala-title">Tippspiel zur Filmnacht</h1>
-                <p class="gala-subtitle">Machen Sie mit und sichern Sie sich die Chance auf ein Getränk Ihrer Wahl auf der After-Show-Party.</p>
+                <p class="gala-subtitle">Machen Sie mit und sichern Sie sich die Chance auf zwei Getränk Ihrer Wahl auf
+                    der After-Show-Party.</p>
                 <button type="button" class="btn-gold" onclick="startShow()">Teilnehmen</button>
             </div>
 
@@ -796,7 +806,7 @@
                 </div>
 
                 <p style="font-size:0.85rem; color:#a09285; margin-top:20px;">
-                    Deine Teilnahme wurde gespeichert. Der Gewinner wird im Verlauf der After-Show-Party verkündet. Viel
+                    Deine Teilnahme wurde gespeichert. Die zehn Gewinner werden im Verlauf der After-Show-Party verkündet. Viel
                     Erfolg!
                 </p>
             </div>
@@ -839,7 +849,7 @@
             aria-label="Gewinneranzeige schließen">&times;</button>
         <div class="winner-content">
             <p id="winnerStatus" class="winner-kicker">Auswertung</p>
-            <h1 id="winnerName" class="winner-name"></h1>
+            <ol id="winnerName" class="winner-name" aria-live="polite"></ol>
             <p id="winnerDetails" class="winner-details"></p>
             <p id="winnerParticipantCount" class="winner-count"></p>
             <button id="winnerHomeButton" type="button" class="btn-gold winner-home-button">Zur Startseite</button>
@@ -1161,23 +1171,59 @@
             winnerParticipantCount.textContent = totalParticipants === 1
                 ? '1 Person hat teilgenommen.'
                 : `${totalParticipants} Personen haben teilgenommen.`;
+            winnerName.replaceChildren();
 
             if (entries.length === 0) {
                 winnerStatus.textContent = 'Keine Teilnahmen';
-                winnerName.textContent = 'Noch keine gültigen Teilnahmen';
+                const emptyItem = document.createElement('li');
+                emptyItem.textContent = 'Noch keine gültigen Teilnahmen';
+                winnerName.appendChild(emptyItem);
                 winnerDetails.textContent = '';
                 return;
             }
 
-            const closestDifference = Math.min(...entries.map(entry => Math.abs(entry.answer - correctAnswer)));
-            const finalists = entries.filter(entry => Math.abs(entry.answer - correctAnswer) === closestDifference);
-            const winner = finalists[Math.floor(Math.random() * finalists.length)];
+            const uniqueEntries = [];
+            const seenNames = new Set();
+            entries.forEach(entry => {
+                const normalizedName = entry.name.toLocaleLowerCase('de-DE');
+                if (!seenNames.has(normalizedName)) {
+                    seenNames.add(normalizedName);
+                    uniqueEntries.push(entry);
+                }
+            });
 
-            winnerStatus.textContent = closestDifference === 0 ? 'Exakter Treffer' : 'Nächstliegende Schätzung';
-            winnerName.textContent = winner.name;
-            winnerDetails.textContent = closestDifference === 0
-                ? `Richtige Antwort: ${correctAnswer}. Aus ${finalists.length} exakten Treffern ausgelost.`
-                : `Schätzung: ${winner.answer}. Richtige Antwort: ${correctAnswer}. Aus ${finalists.length} gleich nahen Schätzungen ausgelost.`;
+            const entriesByDifference = new Map();
+            uniqueEntries.forEach(entry => {
+                const difference = Math.abs(entry.answer - correctAnswer);
+                if (!entriesByDifference.has(difference)) {
+                    entriesByDifference.set(difference, []);
+                }
+                entriesByDifference.get(difference).push(entry);
+            });
+
+            const rankedEntries = [];
+            [...entriesByDifference.entries()]
+                .sort(([differenceA], [differenceB]) => differenceA - differenceB)
+                .forEach(([, finalists]) => {
+                    for (let i = finalists.length - 1; i > 0; i--) {
+                        const randomIndex = Math.floor(Math.random() * (i + 1));
+                        [finalists[i], finalists[randomIndex]] = [finalists[randomIndex], finalists[i]];
+                    }
+                    rankedEntries.push(...finalists);
+                });
+
+            const winners = rankedEntries.slice(0, 10);
+            winners.forEach(winner => {
+                const item = document.createElement('li');
+                item.textContent = winner.name;
+                winnerName.appendChild(item);
+            });
+
+            const exactWinnerCount = winners.filter(winner => winner.answer === correctAnswer).length;
+            winnerStatus.textContent = winners.length === 10 ? 'Die 10 Gewinner' : `${winners.length} Gewinner`;
+            winnerDetails.textContent = exactWinnerCount > 0
+                ? `Richtige Antwort: ${correctAnswer}. ${exactWinnerCount} der ${winners.length} Gewinner ${exactWinnerCount === 1 ? 'hat' : 'haben'} exakt getroffen; die übrigen Plätze wurden nach der nächstliegenden Schätzung ausgelost.`
+                : `Richtige Antwort: ${correctAnswer}. Die ${winners.length} nächstliegenden Schätzungen wurden zufällig als Gewinner bestimmt.`;
         }
 
         /**
